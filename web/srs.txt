@@ -1,0 +1,14 @@
+me -> browse http://localhost:3000
+-> next.js server
+-> request graphql server localhost:4000
+-> building the HTML
+-> sending back to you browser
+
+The thing about Next.js is that after you loaded a page, the pages after that are not server-side rendered.
+When we went to the home page and hit login, then we press the back button, it is going to do a client-side routing to go back to the home page.
+And that query didnt load yet, so its going to load a query but from the browser not from the server, since we dont do server-side rendering when we already navigated pages.
+So the next js actually switches.
+Initial page you load with Next.js is going to server-side render after that it will not.
+Thats why you see loading... it is actually loading from your browser.
+
+It is going to toggle between server-side and client-sider rendering depending on if we loaded the page yet.
