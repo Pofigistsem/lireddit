@@ -1,0 +1,59 @@
+ssr 
+    browser -> next.js (server) -> graphql api
+
+client side
+    browser -> graphql api
+
+When a browser makes a request its going to automatically send the cookies. 
+So, automatically send cookies to next.js server and graphql api.
+
+What happening for ssr is: 
+    It is sending cookies to next.js server and it is not doing anything with the cookie, it is gone when it makes a request to api.
+
+But for client side:
+    We directly talk to our graphql api then its going to send the cookie.
+
+THEREFORE:
+    When we first load the page it does ssr request, so the cookie is not sent, so it doesnt know who we are (user).
+    So our voteStatus doesnt work. 
+    But when we create a post, this is going to invalidate the post and it is going to make another request,
+    and it is going to make a request to a browser directly to the api, then we are going to have voteStatus there.
+
+We can also click load more button when first loading the page, and it will show up/downdoots for older posts.
+This is because load more makes a request from our browser.
+
+How to fix it?
+    We have to tell our next.js server to send the cookie to grahpql api. 
+
+
+We do it by editing our createUrqlClient:
+        adding ctx argument of type any
+
+        then creating an empty cookie variable and checking if cookie is there  
+
+          let cookie = "";
+  if (isServer()) {
+    cookie = ctx.req.headers.cookie;
+  }      
+
+    then add a new fetch option of headers. Then we use tertiary operators in order to either set a header to cookie if it is there
+    or set it to undefined if nothing is there.
+
+        fetchOptions: {
+      credentials: "include" as const,
+      headers: cookie
+        ? {
+            cookie,
+          }
+        : undefined,
+    }
+
+We can also delete:
+{
+    pause: isServer(),
+  }
+    In navBar component since before we said not to make a request for that on the server, since it would have just returned null.
+    But now it will actually be able to know who we are on the server, since we are forwarding the cookie.
+    Leave it in: since dont feel like we need to make the request on seerver side.
+
+    
